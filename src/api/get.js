@@ -1,75 +1,6 @@
-// import axios from 'axios';
-// import md5 from 'md5';
-
-// const currentUrl = 'https://api.valantis.store:41000/';
-// const currentPassword = 'Valantis';
-
-// const currentDate = new Date();
-// const currentTimestamp = currentDate.toISOString().slice(0, 10).replace(/-/g, '');
-
-// const authString = `${currentPassword}_${currentTimestamp}`;
-// const xAuth = md5(authString);
-// const currentHeaders = {
-//     headers: {
-//         'X-Auth': xAuth,
-//         'Content-Type': 'application/json'
-//     }
-// }
-
-// const getIds = async (offset = 0, limit = 50) => {
-//     try {
-//         const { data } = await axios.post(currentUrl, {
-//             "action": "get_ids",
-//             "params": { "offset": offset, "limit": limit }
-//         }, currentHeaders);
-//         return data.result
-//     } catch (e) {
-//         console.error(e);
-//     }
-
-// };
-
-// const getItems = async (ids) => {
-//     try {
-//         const { data } = await axios.post(currentUrl, {
-//             "action": "get_items",
-//             "params": {"ids": ids}
-//         }, currentHeaders);
-//         return data.result
-
-//     } catch (e) {
-//         console.error(e);
-//     }
-// }
-// // // функция юужет принимать какой то  объект фильтр 
-// const filterItems = async (filters) => {
-//     try {
-//         const { data } = await axios.post(currentUrl, {
-//             "action": "filter",
-//             "params": filters
-//         }, currentHeaders);
-//         return data.result;
-//     } catch (error) {
-//         console.error(error);
-//     }
-// };
-
-// const getFields = async (field, offset = 0, limit = 10) => {
-//     try {
-//         const { data } = await axios.post(currentUrl, {
-//             "action": "get_fields",
-//             "params": { "field": field, "offset": offset, "limit": limit }
-//         }, currentHeaders);
-//         return data;
-//     } catch (e) {
-//         console.error(e);
-//     }
-// };
-  
-
-// export { getIds, getItems, getFields, filterItems }; 
 import axios from 'axios';
 import md5 from 'md5';
+
 
 const currentUrl = 'https://api.valantis.store:41000/';
 const currentPassword = 'Valantis';
@@ -86,7 +17,7 @@ const currentHeaders = {
     }
 }
 
-const getIds = async (offset = 0, limit = 50) => {
+const getIds = async (offset = 0, limit = 50, retries = 2) => {
     try {
         const { data } = await axios.post(currentUrl, {
             "action": "get_ids",
@@ -94,12 +25,17 @@ const getIds = async (offset = 0, limit = 50) => {
         }, currentHeaders);
         return data.result
     } catch (e) {
-        console.error(e);
+        if (retries > 0) {
+            console.error("Ошибка при получении ID, повторная попытка...");
+            return await getIds(offset, limit, retries - 1);
+        } else {
+            console.error("Ошибка при получении ID, количество попыток исчерпано.");
+            throw e; 
+        }
     }
 
 };
-
-const getItems = async (ids) => {
+const getItems = async (ids, retries = 2) => {
     try {
         const { data } = await axios.post(currentUrl, {
             "action": "get_items",
@@ -111,35 +47,36 @@ const getItems = async (ids) => {
             ))
         );
     } catch (e) {
-        console.error(e);
+        if (retries > 0) {
+            console.error("Ошибка при получении товаров, повторная попытка...");
+            return await getItems(ids, retries - 1);
+        } else {
+            console.error("Ошибка при получении товаров, количество попыток исчерпано.");
+            throw e; 
+        }
     }
 }
 
-const filterItems = async (filters, offset = 0, limit = 50) => {
+
+const filterItems = async (filters, retries = 2) => {
     try {
         const { data } = await axios.post(currentUrl, {
             "action": "filter",
             "params": filters
         }, currentHeaders);
-        return data.result.slice(offset, offset + limit);
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const getFields = async (field, offset = 0, limit = 50) => {
-    try {
-        const { data } = await axios.post(currentUrl, {
-            "action": "get_fields",
-            "params": { "field": field, "offset": offset, "limit": limit }
-        }, currentHeaders);
-        return data;
+        return data.result;
     } catch (e) {
-        console.error(e);
+        if (retries > 0) {
+            console.error("Ошибка при фильтрации товаров, повторная попытка...");
+            return await filterItems(filters, retries - 1);
+        } else {
+            console.error("Ошибка при фильтрации товаров, количество попыток исчерпано.");
+            throw e; 
+        }
     }
 };
 
-const getFieldValues = async (field, offset = 0, limit = 50) => {
+const getFields = async (field, offset = 0, limit = 10, retries = 2) => {
     try {
         const { data } = await axios.post(currentUrl, {
             "action": "get_fields",
@@ -147,8 +84,33 @@ const getFieldValues = async (field, offset = 0, limit = 50) => {
         }, currentHeaders);
         return data.result;
     } catch (e) {
-        console.error(e);
+        if (retries > 0) {
+            console.error("Ошибка при получении полей, повторная попытка...");
+            return await getFields(field, offset, limit, retries - 1);
+        } else {
+            console.error("Ошибка при получении полей, количество попыток исчерпано.");
+            throw e; 
+        }
     }
 };
-  
-export { getIds, getItems, getFields, filterItems, getFieldValues};
+const getFieldsAll = async ( retries = 2) => {
+    try {
+        const { data } = await axios.post(currentUrl, {
+            "action": "get_fields",
+           
+        }, currentHeaders);
+        return data.result;
+    } catch (e) {
+        if (retries > 0) {
+            console.error("Ошибка при получении полей, повторная попытка...");
+            return await getFields(  retries - 1);
+        } else {
+            console.error("Ошибка при получении полей, количество попыток исчерпано.");
+            throw e; 
+        }
+    }
+};
+
+
+
+export { getIds, getItems, getFields, filterItems, getFieldsAll }; 

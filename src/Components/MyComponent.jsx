@@ -1,178 +1,62 @@
-import { useEffect, useState } from 'react';
-import { getIds, getItems, getFields, filterItems } from "../api/get";
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { addIds } from '../Slice/idsSlice'; // Путь к вашему экшену addIds
+import { getIds, getItems } from '../api/get'; // Путь к вашей функции getIds
+import { addItems, toggleLoading } from '../Slice/itemsSlice';
+import PaginationComponent from './PaginationComponent';
+import { ListGroup } from 'react-bootstrap';
+import FilterComponent from './FilterComponent';
+
+function MyComponent() {
+
+    const dispatch = useDispatch();
+    const ids = useSelector(state => state.ids.ids)
+    const items = useSelector(state => state.items.items)
+    const offset = useSelector(state => state.parameters.offset);
+    const isLodingItems = useSelector(state => state.items.loading)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const newIds = await getIds(offset);
+            dispatch(addIds(newIds));
+        };
+        fetchData();
+    }, [dispatch, offset]);
 
 
-const MyComponent = () => {
+    useEffect(() => {
+        const fetchData = async () => {
+           
+            const newItems = await getItems(ids);
+            dispatch(toggleLoading())
+            if (newItems.length > 0) {
+                const currentItems = newItems.filter((item, index, array) =>
+                    array.findIndex(o => o.id === item.id) === index
+                );
+                dispatch(addItems(currentItems));
+                dispatch(toggleLoading())
+            }
+        };
+        fetchData();
 
-  const [items, setItems] = useState([]);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+    }, [dispatch, ids]);
 
-  const [brandValues, setBrandValues] = useState([]);
-  const [productValues, setProductValues] = useState([]);
-  const [priceValues, setPriceValues] = useState([]);
+    const list = items.map((item) => (
+        <ListGroup.Item key={item.id} variant="success">{`Бренд - ${item.brand === null ? 'Не известен' : item.brand}  Цена - ${item.price} Продукт - ${item.product}`}</ListGroup.Item>
+    ));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const ids = await getIds(offset);
-      if (ids.length === 0) {
-        setHasMore(false);
-        return;
-      }
-      const fetchedItems = await getItems(ids);
-      // Удаление дубликатов объектов по полю 'id'
-      const uniqueItems = [...new Set(fetchedItems.map(item => item.id))]
-        .map(id => fetchedItems.find(item => item.id === id));
-      setItems(uniqueItems);
-//---------------------------------------------------------------
-       const products = await getFields("product");  // тут получаем массив элеметов по передаму праметру
-       const prices = await getFields("price"); 
-       const brands = await getFields("brand");
-       const filteredItems = {}
-  //  const fiterId = await filterItems({"product" : products.result[0], "price": price.result[0],  'brand' : brand.result[0]} );
-   // тут я делаю логику что если у нас получет массив по продуктам(или другим элементам), то добовляем  ключ с значением в данном случаем первым в объект 
-        if (products) {filteredItems["product"] = products.result[0]}
-        if (prices) {filteredItems["prices"] = prices.result[0]}
-        if (brands) {brands["product"] = brands.result[0]}
-      
-        const fiterIds = await filterItems(filteredItems);
-        console.log(fiterIds)
-   
 
-//------------------------------------------------------------------
- 
-    };
-
-    fetchData();
-  }, [offset]);
-
-  const list = items.map((item) => (
-    <li key={item.id}>{`Бренд - ${item.brand} Price - ${item.price} Product - ${item.product}`}</li>
-  ));
-
-  const clickNext = () => setOffset(prev =>  prev + 50);
-  const clickPrev = () => setOffset(prev => prev - 50);
-  
-
-  return (
-    <div>
-         <div>
-        <h2>Фильтр</h2>
-    
-
-        <select value={'Product'} >
-          <option value="">Выберите товар</option>
-          {productValues.map((value, index) => (
-            <option key={index} value={value}>{value}</option>
-          ))}
-        </select>
-
-  
-
-      </div>
-        <button onClick={clickPrev} disabled={offset === 0}>{'назад'}</button>
-        <button onClick={clickNext} disabled={!hasMore}>{'вперед'}</button>
-      <ol>{list}</ol>
-    </div>
-  );
-};
+    return (
+        <div>
+            <FilterComponent />
+            <PaginationComponent />
+ { 
+isLodingItems ? 'Loding' : <ListGroup as="ol" numbered >{list}</ListGroup>
+       
+  }
+            
+        </div>
+    );
+}
 
 export default MyComponent;
-
-
-// import React, { useEffect, useState } from 'react';
-// import { getIds, getItems, getFieldValues, filterItems } from "../api/get";
-
-// const MyComponent = () => {
-//   const [items, setItems] = useState([]);
-//   const [offset, setOffset] = useState(0);
-//   const [hasMore, setHasMore] = useState(true);
-//   const [brandValues, setBrandValues] = useState([]);
-//   const [productValues, setProductValues] = useState([]);
-//   const [priceValues, setPriceValues] = useState([]);
-//   const [selectedBrand, setSelectedBrand] = useState("");
-//   const [selectedProduct, setSelectedProduct] = useState("");
-//   const [selectedPrice, setSelectedPrice] = useState("");
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       const ids = await getIds(offset);
-//       if (ids.length === 0) {
-//         setHasMore(false);
-//         return;
-//       }
-//       const fetchedItems = await getItems(ids);
-//       const uniqueItems = [...new Set(fetchedItems.map(item => item.id))]
-//         .map(id => fetchedItems.find(item => item.id === id));
-//       setItems(uniqueItems);
-
-//       const brandValues = await getFieldValues("brand");
-//       const productValues = await getFieldValues("product");
-//       const priceValues = await getFieldValues("price");
-//       setBrandValues(brandValues);
-//       setProductValues(productValues);
-//       setPriceValues(priceValues);
-//     };
-
-//     fetchData();
-//   }, [offset]);
-
-//   const handleFilter = async () => {
-//     let filters = {};
-//     if (selectedBrand !== "") {
-//       filters["brand"] = selectedBrand;
-//     }
-//     if (selectedProduct !== "") {
-//       filters["product"] = selectedProduct;
-//     }
-//     if (selectedPrice !== "") {
-//       filters["price"] = parseFloat(selectedPrice);
-//     }
-//     const filteredItems = await filterItems(filters);
-//     setItems(filteredItems);
-//   };
-
-//   const list = items.map((item) => (
-//     <li key={item.id}>{`Название: ${item.product}, Цена: ${item.price}, Бренд: ${item.brand}`}</li>
-//   ));
-
-//   const clickNext = () => setOffset(prev => prev + 50);
-//   const clickPrev = () => setOffset(prev => prev - 50);
-
-//   return (
-    // <div>
-      //    <div>
-      //   <h2>Фильтр</h2>
-      //   <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)}>
-      //     <option value="">Выберите бренд</option>
-      //     {brandValues.map((value, index) => (
-      //       <option key={index} value={value}>{value}</option>
-      //     ))}
-      //   </select>
-
-      //   <select value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)}>
-      //     <option value="">Выберите товар</option>
-      //     {productValues.map((value, index) => (
-      //       <option key={index} value={value}>{value}</option>
-      //     ))}
-      //   </select>
-
-      //   <select value={selectedPrice} onChange={(e) => setSelectedPrice(e.target.value)}>
-      //     <option value="">Выберите цену</option>
-      //     {priceValues.map((value, index) => (
-      //       <option key={index} value={value}>{value}</option>
-      //     ))}
-      //   </select>
-
-      //   <button onClick={handleFilter}>Применить фильтр</button>
-      // </div>
-//       <button onClick={clickPrev} disabled={offset === 0}>{'Назад'}</button>
-//       <button onClick={clickNext} disabled={!hasMore}>{'Вперед'}</button>
-//       <ol>{list}</ol>
-
-   
-//     </div>
-//   );
-// };
-
-// export default MyComponent;

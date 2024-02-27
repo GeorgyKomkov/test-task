@@ -67,16 +67,16 @@ const filterItems = async (filters, retries = 2) => {
         return data.result;
     } catch (e) {
         if (retries > 0) {
-            console.error("Ошибка при фильтрации товаров, повторная попытка...");
+            console.error("Ошибка при фильтрации , повторная попытка...");
             return await filterItems(filters, retries - 1);
         } else {
-            console.error("Ошибка при фильтрации товаров, количество попыток исчерпано.");
+            console.error("Ошибка при фильтрации , количество попыток исчерпано.");
             throw e; 
         }
     }
 };
 
-const getFields = async (field, offset = 0, limit = 10, retries = 2) => {
+const getFields = async (field, offset = 0, limit = 50, retries = 2) => {
     try {
         const { data } = await axios.post(currentUrl, {
             "action": "get_fields",
@@ -93,24 +93,9 @@ const getFields = async (field, offset = 0, limit = 10, retries = 2) => {
         }
     }
 };
-const getFieldsAll = async ( retries = 2) => {
-    try {
-        const { data } = await axios.post(currentUrl, {
-            "action": "get_fields",
-           
-        }, currentHeaders);
-        return data.result;
-    } catch (e) {
-        if (retries > 0) {
-            console.error("Ошибка при получении полей, повторная попытка...");
-            return await getFields(  retries - 1);
-        } else {
-            console.error("Ошибка при получении полей, количество попыток исчерпано.");
-            throw e; 
-        }
-    }
-};
 
 
 
-export { getIds, getItems, getFields, filterItems, getFieldsAll }; 
+
+
+export { getIds, getItems, getFields, filterItems }; 

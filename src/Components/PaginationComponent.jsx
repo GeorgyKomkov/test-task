@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { increaseOffset,  reduceOffset } from '../Slice/parametersSlice'
+import { incrementOffset,  decrementOffset  } from '../Slice/parametersSlice'
  import { Button } from 'react-bootstrap';
 
 const PaginationComponent = () => {
@@ -8,8 +8,8 @@ const PaginationComponent = () => {
     const offset = useSelector(state => state.parameters.offset);
     const ids = useSelector(state => state.ids.ids);
 
-    const clickNext = () => dispatch(increaseOffset(50));
-    const clickPrev = () => dispatch(reduceOffset(50));
+    const clickNext = () => dispatch(incrementOffset(50));
+    const clickPrev = () => dispatch(decrementOffset (50));
 
     return (<div>
         <Button variant="secondary" onClick={clickPrev} disabled={offset === 0}>{'назад'}</Button>

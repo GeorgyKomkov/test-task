@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     ids: [],
+    filterIds: []
 };
 
 const idsSlice = createSlice({
@@ -13,8 +14,11 @@ const idsSlice = createSlice({
         addIds(state, { payload }) {
             state.ids = [...payload]
         },
+        updFilterIds(state, {payload}){
+            state.filterIds = [...payload]
+        }
     }
 });
 
-export const { addIds } = idsSlice.actions;
+export const { addIds, updFilterIds } = idsSlice.actions;
 export default idsSlice.reducer;

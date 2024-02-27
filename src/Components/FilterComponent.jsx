@@ -1,31 +1,26 @@
 import { Form } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux';
-import { addIProducts, addPrices, addBrands } from '../Slice/fieldsSlice'
-import { useEffect, useState } from 'react';
-import { getFields, filterItems } from '../api/get';
-import { addIds } from '../Slice/idsSlice';
+import { addIProducts, addPrices, addBrands, setSeletedBrand, setSeletedPrice, setSeletedProduct, } from '../Slice/fieldsSlice';
+import { useEffect } from 'react';
+import { getFields, filterItems } from '../api/apiItems';
+// import { addIds } from '../Slice/idsSlice';
 
 
 const FilterComponent = () => {
-    const [activeBrand, setactiveBrand] = useState('');
-    const dispatch = useDispatch();
-    const fields = useSelector(state => state.fields);
-    const { products, prices, brands } = fields;
 
-    useEffect(()=>{
-        const fetchData = async () => {
-    
-        }
-        fetchData()
-    },[])
+    const dispatch = useDispatch();
+    const {offset, limit, filters} = useSelector(state => state.parameters);
+    const { products, prices, brands} =  useSelector(state => state.fields);
+
 
     useEffect(() => {
         const fetchData = async () => {
-            const fieldsProducts = await getFields('product')
-            const fieldsPrices = await getFields('price')
-            const fieldsBrands = await getFields('brand')
+            // получаем данные для выпадающего списка и пр эл формы
+            const fieldsProducts = await getFields('product', offset, limit);
+            const fieldsPrices = await getFields('price', offset, limit);
+            const fieldsBrands = await getFields('brand', offset, limit);
             const currentBrands = [...new Set(fieldsBrands)]
-                .map(brand => brand === null ? 'Неизвестный' : brand)
+                .map(brand => brand === null ? 'Неизвестный бренд' : brand);
 
             dispatch(addIProducts(fieldsProducts));
             dispatch(addPrices(fieldsPrices));
@@ -33,17 +28,18 @@ const FilterComponent = () => {
 
         }
         fetchData()
-    }, [dispatch]);
+    }, [dispatch, offset, limit]);
 
 
     useEffect(() => {
-     
-       const fetchData = async () => {
-       const filterIds = await filterItems({'brand' : activeBrand})
-       dispatch(addIds(filterIds))
-    }
-    fetchData()
-    }, [activeBrand, dispatch]);
+
+        const fetchData = async () => {
+            if (Object.entries(filters).length === 0) { return }
+            const data = await filterItems(filters);
+            console.log(data);
+        }
+        fetchData()
+    }, [dispatch, filters]);
 
 
     const options = (fields) => {
@@ -53,27 +49,50 @@ const FilterComponent = () => {
     }
 
     const handleBrandChange = (event) => {
-        if (event.target.value === 'Неизвестный') {
-            setactiveBrand(null);
-        }else {
-            setactiveBrand(event.target.value);
+        if (event.target.value === 'Выбереите Бренд') {
+            dispatch(setSeletedBrand(''));
+
+        } else if (event.target.value === 'Неизвестный бренд') {
+            dispatch(setSeletedBrand(null));
+        } else {
+            dispatch(setSeletedBrand(event.target.value));
         }
-      
+
     };
+
+
+    const handlePricehange = (event) => {
+        if (event.target.value === 'Выберите Цену') {
+            dispatch(setSeletedPrice(''));
+        } else {
+            dispatch(setSeletedPrice(event.target.value));
+        }
+
+    };
+    const handleproductProduct = (event) => {
+        if (event.target.value === 'Выберите Продукт') {
+            dispatch(setSeletedProduct(''));
+        }  else {
+            dispatch(setSeletedProduct(event.target.value));
+        }
+
+    };
+
 
     return (
         <div>
-            <Form.Select size="lg"  onChange={handleBrandChange}>
+
+            <Form.Select size="lg" onChange={handleBrandChange}>
                 <option selected >Выбереите Бренд</option>
                 {options(brands)}
             </Form.Select>
             <br />
-            <Form.Select size="lg">
+            <Form.Select size="lg" onChange={handleproductProduct}>
                 <option selected>Выберите Продукт</option>
                 {options(products)}
             </Form.Select>
             <br />
-            <Form.Select size="lg">
+            <Form.Select size="lg" onChange={handlePricehange}>
                 <option selected>Выберите Цену</option>
                 {options(prices)}
             </Form.Select>
@@ -81,4 +100,7 @@ const FilterComponent = () => {
     );
 }
 
-export default FilterComponent
+export default FilterComponent;
+
+
+

@@ -10,13 +10,16 @@ const itemsSlice = createSlice({
     initialState,
     reducers: {
         addItems(state, { payload }) {
-            state.items = [...payload]
+            state.items = [...payload];
         },
-        toggleLoading(state) { 
-            state.loading = !state.loading;
+        setLoadingTrue(state) {
+            state.loading = true;
+        },
+        setLoadingFalse(state) {
+            state.loading = false;
         },
     }
 });
 
-export const { addItems, toggleLoading } = itemsSlice.actions;
+export const { addItems, setLoadingTrue, setLoadingFalse } = itemsSlice.actions;
 export default itemsSlice.reducer;

@@ -3,19 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addIProducts, addPrices, addBrands, setSeletedBrand, setSeletedPrice, setSeletedProduct, } from '../Slice/fieldsSlice';
 import { useEffect } from 'react';
 import { getFields, filterItems } from '../api/apiItems';
-// import { addIds } from '../Slice/idsSlice';
+import { addFilterIdsBrands, addFilterIdsPrices, addFilterIdsProducts, clearFilterIdsBrands, clearFilterIdsProducts, clearFilterIdsPrices } from '../Slice/idsSlice';
 
 
 const FilterComponent = () => {
 
     const dispatch = useDispatch();
-    const {offset, limit, filters} = useSelector(state => state.parameters);
+    const {offset, limit, filters, filterStatus} = useSelector(state => state.parameters);
     const { products, prices, brands} =  useSelector(state => state.fields);
-
+    const {selectedBrand, selectedPrice, selectedProduct } = useSelector(state => state.fields)
+    const isLodingItems = useSelector(state => state.items.loading); 
 
     useEffect(() => {
         const fetchData = async () => {
-            // получаем данные для выпадающего списка и пр эл формы
             const fieldsProducts = await getFields('product', offset, limit);
             const fieldsPrices = await getFields('price', offset, limit);
             const fieldsBrands = await getFields('brand', offset, limit);
@@ -32,14 +32,29 @@ const FilterComponent = () => {
 
 
     useEffect(() => {
-
         const fetchData = async () => {
-            if (Object.entries(filters).length === 0) { return }
-            const data = await filterItems(filters);
-            console.log(data);
+            if (filterStatus === 'no filter' ) { 
+                if (!selectedBrand) { dispatch(clearFilterIdsBrands())}
+                if (!selectedPrice) {dispatch(clearFilterIdsPrices())}
+                if (!selectedProduct) {dispatch(clearFilterIdsProducts())}
+                return 
+            }
+
+            if (filterStatus === 'brand' ) {
+                const brandIds = await filterItems(filters);
+                dispatch(addFilterIdsBrands(brandIds));
+            }
+            if (filterStatus === 'price'  ) {
+                const priceIds = await filterItems(filters);
+                dispatch(addFilterIdsPrices(priceIds));
+            }
+            if (filterStatus === 'product' ) {
+                const productsIds = await filterItems(filters);
+                dispatch(addFilterIdsProducts(productsIds));
+            }
         }
         fetchData()
-    }, [dispatch, filters]);
+    }, [dispatch, filters, filterStatus, selectedProduct, selectedPrice, selectedBrand]);
 
 
     const options = (fields) => {
@@ -65,7 +80,7 @@ const FilterComponent = () => {
         if (event.target.value === 'Выберите Цену') {
             dispatch(setSeletedPrice(''));
         } else {
-            dispatch(setSeletedPrice(event.target.value));
+            dispatch(setSeletedPrice(+event.target.value));
         }
 
     };
@@ -81,19 +96,22 @@ const FilterComponent = () => {
 
     return (
         <div>
-
-            <Form.Select size="lg" onChange={handleBrandChange}>
-                <option selected >Выбереите Бренд</option>
+            <h4 className="text-center">Фильтр</h4>
+            <label className="form-label fw-bold">Выберите Бренд</label>
+            <Form.Select size="lg" onChange={handleBrandChange}  disabled={isLodingItems}>
+                <option>Выбереите Бренд</option>
                 {options(brands)}
             </Form.Select>
-            <br />
-            <Form.Select size="lg" onChange={handleproductProduct}>
-                <option selected>Выберите Продукт</option>
+            
+            <label className="form-label fw-bold">Выберите Продукт</label>
+            <Form.Select size="lg" onChange={handleproductProduct} disabled={isLodingItems}>
+                <option>Выберите Продукт</option>
                 {options(products)}
             </Form.Select>
-            <br />
-            <Form.Select size="lg" onChange={handlePricehange}>
-                <option selected>Выберите Цену</option>
+           
+            <label className="form-label fw-bold">Выберите Цену</label>
+            <Form.Select size="lg" onChange={handlePricehange} disabled={isLodingItems}>
+                <option>Выберите Цену</option>
                 {options(prices)}
             </Form.Select>
         </div>

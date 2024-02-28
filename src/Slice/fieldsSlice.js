@@ -7,7 +7,6 @@ const initialState = {
      selectedBrand: '',
      selectedPrice: '',
      selectedProduct: '',
-     filterIds: [],
 };
 
 const fieldsSlice = createSlice({
@@ -32,8 +31,9 @@ const fieldsSlice = createSlice({
         setSeletedPrice(state, {payload}){
             state.selectedPrice = payload;
         },
-
-    }
+    },
+    
 });
 export const { addIProducts, addPrices,  addBrands, setSeletedBrand, setSeletedProduct, setSeletedPrice } = fieldsSlice.actions;
 export default fieldsSlice.reducer;
+

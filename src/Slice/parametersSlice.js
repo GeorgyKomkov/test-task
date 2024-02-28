@@ -5,6 +5,7 @@ const initialState = {
     offset: 0,
     limit: 50,
     filters: {},
+    filterStatus : 'no filter',
 };
 
 const parametersSlice = createSlice({
@@ -25,25 +26,31 @@ const parametersSlice = createSlice({
         },
     }, extraReducers: (builder) => {
         builder
-        .addCase(setSeletedBrand, (state, action) => {
-            if (action.payload !== '') {
-                state.filters = { ...state.filters, brand: action.payload };
+        .addCase(setSeletedBrand, (state, {payload}) => {
+            if (payload !== '') {
+                state.filters = { brand: payload };
+                state.filterStatus = 'brand';
             } else {
                 delete state.filters.brand;
+                state.filterStatus = 'no filter';
             }
         })
-        .addCase(setSeletedProduct, (state, action) => {
-            if (action.payload !== '') {
-                state.filters = { ...state.filters, product: action.payload };
+        .addCase(setSeletedProduct, (state, {payload}) => {
+            if (payload !== '') {
+                state.filters = { product: payload };
+                state.filterStatus = 'product';
             } else {
                 delete state.filters.product;
+                state.filterStatus = 'no filter';
             }
         })
-        .addCase(setSeletedPrice, (state, action) => {
-            if (action.payload !== '') {
-                state.filters = { ...state.filters, price: action.payload };
+        .addCase(setSeletedPrice, (state, {payload}) => {
+            if (payload !== '') {
+                state.filters = {  price: payload };
+                state.filterStatus = 'price';
             } else {
                 delete state.filters.price;
+                state.filterStatus = 'no filter';
             }
         });
     }

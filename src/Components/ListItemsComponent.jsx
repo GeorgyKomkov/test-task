@@ -60,7 +60,7 @@ const ListItemsComponent = () =>{
   }, [dispatch, ids, filterIdsBrands, filterIdsPrices, filterIdsProducts]);
 
   const list = items.map((item) => (
-    <ListGroup.Item key={item.id} variant="success">{`Бренд - ${item.brand === null ? 'Неизвестный бренд' : item.brand}  Цена - ${item.price} Продукт - ${item.product}`}</ListGroup.Item>
+    <ListGroup.Item key={item.id} variant="success">{`Бренд - ${item.brand === null ? 'Неизвестный бренд' : item.brand}  Цена - ${item.price} Продукт - ${item.product} Индетификатор товара - ${item.id}` }</ListGroup.Item>
   ));
 
   return (

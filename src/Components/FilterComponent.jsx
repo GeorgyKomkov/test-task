@@ -70,7 +70,7 @@ const FilterComponent = () => {
   }, [dispatch, filters, filterStatus, selectedProduct, selectedPrice, selectedBrand]);
 
   const options = (fields) => fields.map((field, i) => (
-    <option key={i}>{field}</option>
+    <option className="text-truncate" key={i}>{field}</option>
   ));
 
   const handleBrandChange = (event) => {
@@ -102,18 +102,18 @@ const FilterComponent = () => {
     <div>
       <h4 className="text-center">Фильтр</h4>
       <Form.Group>
-        <Form.Label className="form-label fw-bold">Выберите Бренд</Form.Label>
-        <Form.Select size="lg" onChange={handleBrandChange} disabled={isLodingItems} value={selectedBrand}>
+        <Form.Label className="form-label fw-bold text-truncate" >Выберите Бренд</Form.Label>
+        <Form.Select className='text-truncate' size="lg" onChange={handleBrandChange} disabled={isLodingItems} value={selectedBrand}>
           {options(brands)}
         </Form.Select>
 
-        <Form.Label className="form-label fw-bold">Выберите Продукт</Form.Label>
-        <Form.Select size="lg" onChange={handleProductChange} disabled={isLodingItems} value={selectedProduct}>
+        <Form.Label className="form-label fw-bold text-truncate">Выберите Продукт</Form.Label>
+        <Form.Select className='text-truncate' size="lg" onChange={handleProductChange} disabled={isLodingItems} value={selectedProduct}>
           {options(products)}
         </Form.Select>
 
-        <Form.Label className="form-label fw-bold">Выберите Цену</Form.Label>
-        <Form.Select size="lg" onChange={handlePriceChange} disabled={isLodingItems} value={selectedPrice}>
+        <Form.Label className="form-label fw-bold text-truncate">Выберите Цену</Form.Label>
+        <Form.Select className='text-truncate' size="lg" onChange={handlePriceChange} disabled={isLodingItems} value={selectedPrice}>
           {options(prices)}
         </Form.Select>
       </Form.Group>

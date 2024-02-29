@@ -4,9 +4,12 @@ const initialState = {
      products: [],
      prices: [],
      brands: [],
-     selectedBrand: '',
-     selectedPrice: '',
-     selectedProduct: '',
+     selectedFileds: {
+        selectedBrand: '',
+        selectedPrice: '',
+        selectedProduct: '',
+     }
+    
 };
 
 const fieldsSlice = createSlice({
@@ -14,26 +17,31 @@ const fieldsSlice = createSlice({
     initialState,
     reducers: {
         addIProducts(state, { payload }) {
-            state.products = [...payload]
+            state.products = ['Выбрать все', ...payload]
         },
         addPrices(state, {payload}) {
-            state.prices = [...payload]
+            state.prices = ['Выбрать все', ...payload]
         },
         addBrands(state, {payload}){
-            state.brands = [...payload]
+            state.brands = ['Выбрать все', ...payload]
         },
         setSeletedBrand(state, {payload}){
-            state.selectedBrand = payload;
+            state.selectedFileds.selectedBrand = payload;
         },
         setSeletedProduct(state, {payload}){
-            state.selectedProduct = payload;
+            state.selectedFileds.selectedProduct = payload;
         },
         setSeletedPrice(state, {payload}){
-            state.selectedPrice = payload;
+            state.selectedFileds.selectedPrice = payload;
         },
+        clearSelectedFiledsAll(state){
+            state.selectedFileds.selectedBrand = '';
+            state.selectedFileds.selectedProduct = '';
+            state.selectedFileds.selectedPrice = '';
+        }
     },
     
 });
-export const { addIProducts, addPrices,  addBrands, setSeletedBrand, setSeletedProduct, setSeletedPrice } = fieldsSlice.actions;
+export const { addIProducts, addPrices,  addBrands, setSeletedBrand, setSeletedProduct, setSeletedPrice, clearSelectedFiledsAll } = fieldsSlice.actions;
 export default fieldsSlice.reducer;
 

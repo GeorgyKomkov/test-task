@@ -25,3 +25,4 @@
 - Добавлена обработка возможных ошибок.
 
 ### Запуск
+- Откройте [https://test-task-uml3.onrender.com](https://test-task-uml3.onrender.com) в вашем браузере для просмотра.

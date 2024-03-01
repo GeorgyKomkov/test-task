@@ -5,12 +5,12 @@ import parametersReducer from './parametersSlice';
 import fieldsReducer from './fieldsSlice';
 
 const store = configureStore({
-reducer: {
+  reducer: {
     ids: idsReducer,
     items: itemsReducer,
     parameters: parametersReducer,
     fields: fieldsReducer,
-}
+  },
 });
 
 export default store;

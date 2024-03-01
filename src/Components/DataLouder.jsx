@@ -50,8 +50,6 @@ const DataLouder = () => {
     };
     fetchData();
   }, [dispatch, ids, filterIdsBrands, filterIdsPrices, filterIdsProducts]);
-
-  return;
 };
 
 export default DataLouder;

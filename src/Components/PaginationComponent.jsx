@@ -25,6 +25,6 @@ const PaginationComponent = () => {
       <Button className="mt-4 mb-4 border-right mx-2 btn btn-secondary" variant="secondary" onClick={clickNext} disabled={ids.length === 0 || isLodingItems}>вперед</Button>
     </div>
   );
-}
+};
 
 export default PaginationComponent;

@@ -1,9 +1,7 @@
 import { Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
-import {
-  addIProducts, addPrices, addBrands, setSeletedBrand, setSeletedPrice, setSeletedProduct,
-} from '../Slice/fieldsSlice';
+import { addIProducts, addPrices, addBrands, setSeletedBrand, setSeletedPrice, setSeletedProduct,} from '../Slice/fieldsSlice';
 import { getFields, filterItems } from '../api/apiItems';
 import {
   addFilterIdsBrands, addFilterIdsPrices, addFilterIdsProducts,
@@ -12,13 +10,9 @@ import {
 
 const FilterComponent = () => {
   const dispatch = useDispatch();
-  const {
-    offset, limit, filters, filterStatus,
-  } = useSelector((state) => state.parameters);
+  const { offset, limit, filters, filterStatus,} = useSelector((state) => state.parameters);
   const { products, prices, brands } = useSelector((state) => state.fields);
-  const {
-    selectedBrand, selectedPrice, selectedProduct,
-  } = useSelector((state) => state.fields.selectedFileds);
+  const { selectedBrand, selectedPrice, selectedProduct,} = useSelector((state) => state.fields.selectedFileds);
   const isLodingItems = useSelector((state) => state.items.loading);
 
   useEffect(() => {
@@ -72,6 +66,9 @@ const FilterComponent = () => {
   const options = (fields) => fields.map((field, i) => (
     <option className="text-truncate" key={i}>{field}</option>
   ));
+
+
+
 
   const handleBrandChange = (event) => {
     if (event.target.value === 'Выбрать все') {

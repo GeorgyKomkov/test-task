@@ -1,20 +1,16 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
-import { ListGroup } from 'react-bootstrap';
 import { addIds } from '../Slice/idsSlice';
 import { getIds, getItems } from '../api/apiItems';
 import { incrementLimit, decrementLimit } from '../Slice/parametersSlice';
 import { addItems, setLoadingFalse, setLoadingTrue } from '../Slice/itemsSlice';
-import LoadingSpinner from './LodingSpiner';
 
-const ListItemsComponent = () =>{
+const DataLouder = () => {
   const dispatch = useDispatch();
   const {
     ids, filterIdsPrices, filterIdsBrands, filterIdsProducts,
   } = useSelector((state) => state.ids);
-  const items = useSelector((state) => state.items.items);
   const { offset, limit } = useSelector((state) => state.parameters);
-  const isLodingItems = useSelector((state) => state.items.loading);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,41 +37,21 @@ const ListItemsComponent = () =>{
         }
         if (filterIdsPrices.length > 0) {
           currentItems = currentItems.filter((item) => filterIdsPrices.includes(item.id));
-          dispatch(addItems(currentItems));
         }
         if (filterIdsBrands.length > 0) {
           currentItems = currentItems.filter((item) => filterIdsBrands.includes(item.id));
-          dispatch(addItems(currentItems));
         }
         if (filterIdsProducts.length > 0) {
           currentItems = currentItems.filter((item) => filterIdsProducts.includes(item.id));
-          dispatch(addItems(currentItems));
-        } else {
-          dispatch(addItems(currentItems));
         }
+        dispatch(addItems(currentItems));
         dispatch(setLoadingFalse());
       }
     };
     fetchData();
   }, [dispatch, ids, filterIdsBrands, filterIdsPrices, filterIdsProducts]);
 
-  const list = items.map((item) => (
-    <ListGroup.Item key={item.id} variant="success">{`Бренд - ${item.brand === null ? 'Неизвестный бренд' : item.brand}  Цена - ${item.price} Продукт - ${item.product} Индетификатор товара - ${item.id}` }</ListGroup.Item>
-  ));
+  return;
+};
 
-  return (
-    <div>
-      {isLodingItems ? <LoadingSpinner />
-        : items.length > 0
-          ? (
-            <div>
-              <ListGroup as="ol" numbered>{list}</ListGroup>
-            </div>
-          )
-          : <p>По указанным фильтрам товаров не найдено , попробуйте изменить фильтры.</p>}
-
-    </div>
-  );
-}
-
-export default ListItemsComponent;
+export default DataLouder;

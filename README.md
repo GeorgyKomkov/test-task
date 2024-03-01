@@ -1,3 +1,4 @@
+[![CI](https://github.com/GeorgyKomkov/test-task/actions/workflows/build.yaml/badge.svg)](https://github.com/GeorgyKomkov/test-task/actions/workflows/build.yaml)
 ## Тестовое задание на вакансию Frontend-разработчика в компании "Валантис"
 
 ### Запуск

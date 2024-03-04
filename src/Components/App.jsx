@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import LoadingSpinner from './LodingSpiner';
 import ListItem from './ListItem';
-import FilterComponent from './FilterComponent';
+import FormFilterComponent from './FormFilter/FormFilterComponent';
 import PaginationComponent from './PaginationComponent';
 import DataLouder from './DataLouder';
 
@@ -16,7 +16,7 @@ const App = () => {
           <div className="row bg-white flex-md-row">
             <div className="col-4 col-md-2 border-end px-0 bg-light flex-column d-flex">
               <div className="d-flex flex-column justify-content-between p-4">
-                <FilterComponent />
+                <FormFilterComponent />
                 <hr />
                 <PaginationComponent />
               </div>

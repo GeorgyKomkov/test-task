@@ -10,9 +10,9 @@ const Filters = () => {
   } = useSelector((state) => state.fields.selectedFileds);
   const isLodingItems = useSelector((state) => state.items.loading);
 
-  const options = (fields) => fields.map((field, i) => (
-    // eslint-disable-next-line react/no-array-index-key
-    <option className="text-truncate" key={i}>{field}</option>
+  const options = (fields) => fields.map((field) => (
+
+    <option className="text-truncate" key={`${field}`}>{field}</option>
   ));
 
   const handleBrandChange = (event) => {
